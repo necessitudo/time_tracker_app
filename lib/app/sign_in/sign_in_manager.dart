@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:time_tracker_flutter_course/services/auth.dart';
 
@@ -18,9 +19,11 @@ class SignInManager {
     }
   }
 
-  Future<User> signInAnonymously() async => await _signIn(auth.signInAnonymously);
+  Future<User> signInAnonymously() async =>
+      await _signIn(auth.signInAnonymously);
 
   Future<User> signInWithGoogle() async => await _signIn(auth.signInWithGoogle);
 
-  Future<User> signInWithFacebook() async => await _signIn(auth.signInWithFacebook);
+  Future<User> signInWithFacebook() async =>
+      await _signIn(auth.signInWithFacebook);
 }

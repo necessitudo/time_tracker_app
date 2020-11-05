@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
@@ -13,10 +14,12 @@ import 'mocks.dart';
 
 void main() {
   MockAuth mockAuth;
+  MockDatabase mockDatabase;
   StreamController<User> onAuthStateChangedController;
 
   setUp(() {
     mockAuth = MockAuth();
+    mockDatabase = MockDatabase();
     onAuthStateChangedController = StreamController<User>();
   });
 
@@ -29,7 +32,7 @@ void main() {
       Provider<AuthBase>(
         create: (_) => mockAuth,
         child: MaterialApp(
-          home: LandingPage(),
+          home: LandingPage(databaseBuilder: (_) => mockDatabase),
         ),
       ),
     );
@@ -39,7 +42,7 @@ void main() {
   void stubOnAuthStateChangedYields(Iterable<User> onAuthStateChanged) {
     onAuthStateChangedController
         .addStream(Stream<User>.fromIterable(onAuthStateChanged));
-    when(mockAuth.onAuthStateChanged).thenAnswer((_) {
+    when(mockAuth.authStateChanges()).thenAnswer((_) {
       return onAuthStateChangedController.stream;
     });
   }
@@ -61,7 +64,8 @@ void main() {
   });
 
   testWidgets('non-null user', (WidgetTester tester) async {
-    stubOnAuthStateChangedYields([User(uid: '123')]);
+    final user = MockUser.uid('123');
+    stubOnAuthStateChangedYields([user]);
 
     await pumpLandingPage(tester);
 

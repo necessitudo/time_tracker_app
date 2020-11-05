@@ -9,7 +9,8 @@ class EmailSignInBloc {
   EmailSignInBloc({@required this.auth});
   final AuthBase auth;
 
-  final _modelSubject = BehaviorSubject<EmailSignInModel>.seeded(EmailSignInModel());
+  final _modelSubject =
+      BehaviorSubject<EmailSignInModel>.seeded(EmailSignInModel());
   Stream<EmailSignInModel> get modelStream => _modelSubject.stream;
   EmailSignInModel get _model => _modelSubject.value;
 
