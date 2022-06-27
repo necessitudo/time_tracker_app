@@ -17,8 +17,6 @@ class SignInPage extends StatelessWidget {
   final SignInManager manager;
   final bool isLoading;
 
-  static const Key emailPasswordKey = Key('email-password');
-
   static Widget create(BuildContext context) {
     final auth = Provider.of<AuthBase>(context, listen: false);
     return ChangeNotifierProvider<ValueNotifier<bool>>(
@@ -27,17 +25,19 @@ class SignInPage extends StatelessWidget {
         builder: (_, isLoading, __) => Provider<SignInManager>(
           create: (_) => SignInManager(auth: auth, isLoading: isLoading),
           child: Consumer<SignInManager>(
-            builder: (context, manager, _) => SignInPage(
-              manager: manager,
-              isLoading: isLoading.value,
-            ),
+            builder: (_, manager, __) =>
+                SignInPage(manager: manager, isLoading: isLoading.value),
           ),
         ),
       ),
     );
   }
 
-  void _showSignInError(BuildContext context, FirebaseException exception) {
+  void _showSignInError(BuildContext context, Exception exception) {
+    if (exception is FirebaseException &&
+        exception.code == 'ERROR_ABORTED_BY_USER') {
+      return;
+    }
     showExceptionAlertDialog(
       context,
       title: 'Sign in failed',
@@ -48,7 +48,7 @@ class SignInPage extends StatelessWidget {
   Future<void> _signInAnonymously(BuildContext context) async {
     try {
       await manager.signInAnonymously();
-    } on FirebaseException catch (e) {
+    } on Exception catch (e) {
       _showSignInError(context, e);
     }
   }
@@ -56,20 +56,16 @@ class SignInPage extends StatelessWidget {
   Future<void> _signInWithGoogle(BuildContext context) async {
     try {
       await manager.signInWithGoogle();
-    } on FirebaseException catch (e) {
-      if (e.code != 'ERROR_ABORTED_BY_USER') {
-        _showSignInError(context, e);
-      }
+    } on Exception catch (e) {
+      _showSignInError(context, e);
     }
   }
 
   Future<void> _signInWithFacebook(BuildContext context) async {
     try {
       await manager.signInWithFacebook();
-    } on FirebaseException catch (e) {
-      if (e.code != 'ERROR_ABORTED_BY_USER') {
-        _showSignInError(context, e);
-      }
+    } on Exception catch (e) {
+      _showSignInError(context, e);
     }
   }
 
@@ -123,7 +119,6 @@ class SignInPage extends StatelessWidget {
           ),
           SizedBox(height: 8.0),
           SignInButton(
-            key: emailPasswordKey,
             text: 'Sign in with email',
             textColor: Colors.white,
             color: Colors.teal[700],

@@ -1,4 +1,4 @@
-import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -15,11 +15,11 @@ class EmailSignInFormBlocBased extends StatefulWidget {
   static Widget create(BuildContext context) {
     final auth = Provider.of<AuthBase>(context, listen: false);
     return Provider<EmailSignInBloc>(
-      create: (context) => EmailSignInBloc(auth: auth),
+      create: (_) => EmailSignInBloc(auth: auth),
       child: Consumer<EmailSignInBloc>(
-        builder: (context, bloc, _) => EmailSignInFormBlocBased(bloc: bloc),
+        builder: (_, bloc, __) => EmailSignInFormBlocBased(bloc: bloc),
       ),
-      dispose: (context, bloc) => bloc.dispose(),
+      dispose: (_, bloc) => bloc.dispose(),
     );
   }
 
@@ -47,7 +47,7 @@ class _EmailSignInFormBlocBasedState extends State<EmailSignInFormBlocBased> {
     try {
       await widget.bloc.submit();
       Navigator.of(context).pop();
-    } on FirebaseException catch (e) {
+    } on FirebaseAuthException catch (e) {
       showExceptionAlertDialog(
         context,
         title: 'Sign in failed',

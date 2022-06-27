@@ -1,8 +1,10 @@
-import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:time_tracker_flutter_course/app/sign_in/email_sign_in_bloc.dart';
 import 'package:time_tracker_flutter_course/app/sign_in/email_sign_in_change_model.dart';
+import 'package:time_tracker_flutter_course/app/sign_in/email_sign_in_model.dart';
 import 'package:time_tracker_flutter_course/common_widgets/form_submit_button.dart';
 import 'package:time_tracker_flutter_course/common_widgets/show_exception_alert_dialog.dart';
 import 'package:time_tracker_flutter_course/services/auth.dart';
@@ -14,10 +16,9 @@ class EmailSignInFormChangeNotifier extends StatefulWidget {
   static Widget create(BuildContext context) {
     final auth = Provider.of<AuthBase>(context, listen: false);
     return ChangeNotifierProvider<EmailSignInChangeModel>(
-      create: (context) => EmailSignInChangeModel(auth: auth),
+      create: (_) => EmailSignInChangeModel(auth: auth),
       child: Consumer<EmailSignInChangeModel>(
-        builder: (context, model, _) =>
-            EmailSignInFormChangeNotifier(model: model),
+        builder: (_, model, __) => EmailSignInFormChangeNotifier(model: model),
       ),
     );
   }
@@ -27,14 +28,10 @@ class EmailSignInFormChangeNotifier extends StatefulWidget {
       _EmailSignInFormChangeNotifierState();
 }
 
-class _EmailSignInFormChangeNotifierState
-    extends State<EmailSignInFormChangeNotifier> {
+class _EmailSignInFormChangeNotifierState extends State<EmailSignInFormChangeNotifier> {
   final TextEditingController _emailController = TextEditingController();
-
   final TextEditingController _passwordController = TextEditingController();
-
   final FocusNode _emailFocusNode = FocusNode();
-
   final FocusNode _passwordFocusNode = FocusNode();
 
   EmailSignInChangeModel get model => widget.model;
@@ -50,9 +47,9 @@ class _EmailSignInFormChangeNotifierState
 
   Future<void> _submit() async {
     try {
-      await model.submit();
+      await widget.model.submit();
       Navigator.of(context).pop();
-    } on FirebaseException catch (e) {
+    } on FirebaseAuthException catch (e) {
       showExceptionAlertDialog(
         context,
         title: 'Sign in failed',

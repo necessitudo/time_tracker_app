@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 Future<bool> showAlertDialog(
@@ -10,8 +9,8 @@ Future<bool> showAlertDialog(
   @required String content,
   String cancelActionText,
   @required String defaultActionText,
-}) async {
-  if (kIsWeb || !Platform.isIOS) {
+}) {
+  if (!Platform.isIOS) {
     return showDialog(
       context: context,
       builder: (context) => AlertDialog(

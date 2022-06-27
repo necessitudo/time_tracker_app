@@ -1,11 +1,11 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:time_tracker_flutter_course/common_widgets/show_alert_dialog.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
 Future<void> showExceptionAlertDialog(
   BuildContext context, {
   @required String title,
-  @required dynamic exception,
+  @required Exception exception,
 }) =>
     showAlertDialog(
       context,
